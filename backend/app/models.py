@@ -2,6 +2,11 @@ from sqlalchemy import create_engine,ForeignKey
 from sqlalchemy.orm import relationship,declarative_base, sessionmaker
 from sqlalchemy import JSON,Column, Integer, String, DateTime
 from datetime import datetime
+from sqlalchemy import CheckConstraint
+
+
+from enum import Enum
+from sqlalchemy import Enum as SQLEnum
 
 DATABASE_URL = "sqlite:///./recruitment.db"
 
@@ -18,6 +23,12 @@ SessionLocal = sessionmaker(
 
 Base = declarative_base()
 
+class CandidateStatus(str, Enum):
+    NEW = "new"
+    REVIEWED = "reviewed"
+    HIRED = "hired"
+    REJECTED = "rejected"
+
 class Candidate(Base):
     __tablename__ = "candidates"
 
@@ -25,12 +36,17 @@ class Candidate(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
     role_applied = Column(String, index=True)
-    status = Column(String, index=True)
+    status = Column(
+    SQLEnum(CandidateStatus),
+    index=True,
+    default=CandidateStatus.NEW
+)
     scores = relationship(
         "Score",
-        back_populates="candidate" ##FROM CANDIDATE CLASS, candidate field
+        back_populates="candidate", ##FROM CANDIDATE CLASS, candidate field
+        cascade="all, delete-orphan"
     )
-    skills = Column(JSON)
+    skills = Column(JSON) #For Sqlite JSON is correct choice
     internal_notes = Column(String)
     summary = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -44,15 +60,22 @@ class Score(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     candidate_id = Column(
-        Integer,
-        ForeignKey("candidates.id")
-    )
+    Integer,
+    ForeignKey("candidates.id"),
+    index=True
+)
     candidate = relationship(
         "Candidate",
         back_populates="scores"
     )
     category = Column(String, nullable=False)
-    score = Column(Integer, nullable=False)
+    score = Column(Integer, nullable=False) #1-5 enforced in schema
+    __table_args__ = (
+        CheckConstraint(
+            "score >= 1 AND score <= 5",
+            name="score_range_check"
+        ),
+    )
     reviewer_id = Column(String)
     note = Column(String)
 

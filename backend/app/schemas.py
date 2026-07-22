@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-
+from typing import List,Optional
 
 class CandidateResponse(BaseModel):
     id: int
@@ -59,3 +59,15 @@ class CandidateDetailResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class CandidateListResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    role_applied: Optional[str]
+    status: Optional[str]
+    skills: Optional[list]
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
