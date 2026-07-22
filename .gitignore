@@ -1,0 +1,22 @@
+# Python environment
+dashboardenv/
+
+# Environment variables
+.env
+
+# Database
+*.db
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Testing
+.pytest_cache/
+
+# Frontend later
+frontend/node_modules/
+
+# IDE
+.vscode/
+.idea/
