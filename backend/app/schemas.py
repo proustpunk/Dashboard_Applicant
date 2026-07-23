@@ -1,6 +1,11 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import List,Optional
+from pydantic import BaseModel, EmailStr
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
 
 class CandidateResponse(BaseModel):
     id: int
@@ -19,7 +24,6 @@ class CandidateResponse(BaseModel):
 class ScoreCreate(BaseModel):
     category: str
     score: int = Field(ge=1, le=5)
-    reviewer_id: str | None = None
     note: str | None = None
 
 class ScoreResponse(BaseModel):
@@ -60,7 +64,24 @@ class CandidateDetailResponse(BaseModel):
         "from_attributes": True
     }
 
-class CandidateListResponse(BaseModel):
+
+class CandidateAdminDetailResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    role_applied: str
+    status: str
+    skills: list[str] | None
+    summary: str | None
+    internal_notes: str | None
+    scores: list[ScoreResponse] = []
+
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }
+class CandidateListResponse(BaseModel): #Score is a long list so is the summary. They are avoided here
     id: int
     name: str
     email: str

@@ -83,3 +83,41 @@ class Score(Base):
         DateTime,
         default=datetime.utcnow
     )
+
+
+class UserRole(str, Enum):
+    REVIEWER = "reviewer"
+    ADMIN = "admin"
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    email = Column(
+        String,
+        unique=True,
+        nullable=False,
+        index=True
+    )
+
+    hashed_password = Column(
+        String,
+        nullable=False
+    )
+
+    role = Column(
+        SQLEnum(UserRole),
+        nullable=False,
+        default=UserRole.REVIEWER
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
+    )

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.services.candidate_service import generate_candidate_summary
-from app.schemas import CandidateDetailResponse,SummaryResponse,CandidateResponse, ScoreCreate,ScoreResponse
+from app.schemas import CandidateAdminDetailResponse,CandidateDetailResponse,SummaryResponse,CandidateResponse, ScoreCreate,ScoreResponse
 from sqlalchemy.orm import joinedload
 from fastapi.responses import StreamingResponse
 import json
@@ -11,11 +11,14 @@ from app.schemas import CandidateListResponse
 from app.services.event_manager import event_manager
 from app.services.event_manager import event_manager
 from app.models import SessionLocal, Candidate, Score
+from fastapi import Depends
+from app.routers.auth import get_current_user
+from app.models import User, UserRole
 router = APIRouter()
 
 
-@router.get("/candidates/{id}", response_model=CandidateDetailResponse)
-def get_candidate(id: int):
+@router.get("/candidates/{id}")
+def get_candidate(id: int, current_user: User = Depends(get_current_user)):
     db = SessionLocal()
 
     candidate = db.query(Candidate).options(
@@ -24,12 +27,27 @@ def get_candidate(id: int):
     Candidate.id == id
 ).first()
 
+    if not candidate:
+        db.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Candidate not Found"
+        )
+
+    if current_user.role == UserRole.REVIEWER:
+        candidate.scores = [
+            score for score in candidate.scores
+            if score.reviewer_id == current_user.email
+        ]
+
     db.close()
 
-    return candidate
+    return CandidateAdminDetailResponse.model_validate(
+        candidate
+    )
 
 @router.post("/candidates/{id}/scores", response_model=ScoreResponse)
-async def create_score(id: int, score_data: ScoreCreate): #PUBLISH IS ASYNC
+async def create_score(id: int, score_data: ScoreCreate, current_user: User = Depends(get_current_user)): #PUBLISH IS ASYNC
     db = SessionLocal()
 
     candidate = db.query(Candidate).filter(
@@ -47,7 +65,7 @@ async def create_score(id: int, score_data: ScoreCreate): #PUBLISH IS ASYNC
         candidate_id=id,
         category=score_data.category,
         score=score_data.score,
-        reviewer_id=score_data.reviewer_id,
+        reviewer_id=current_user.email,
         note=score_data.note
     )
 
@@ -71,7 +89,7 @@ async def create_score(id: int, score_data: ScoreCreate): #PUBLISH IS ASYNC
     return score
 
 @router.post("/candidates/{id}/summary", response_model=SummaryResponse)
-async def generate_summary(id: int):
+async def generate_summary(id: int, current_user: User = Depends(get_current_user)):
     db = SessionLocal()
 
     candidate = db.query(Candidate).filter(

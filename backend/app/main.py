@@ -4,6 +4,7 @@ from app.models import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers.candidates import router as candidate_router
+from app.routers import auth
 
 app = FastAPI()
 
@@ -11,6 +12,7 @@ app = FastAPI()
 #creates a recruitment.db written in models.py
 
 app.include_router(candidate_router)
+app.include_router(auth.router)
 
 app.add_middleware(
     CORSMiddleware,
