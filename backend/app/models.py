@@ -37,7 +37,12 @@ class Candidate(Base):
     email = Column(String, unique=True, nullable=False)
     role_applied = Column(String, index=True)
     status = Column(
-    SQLEnum(CandidateStatus),
+    SQLEnum(
+        CandidateStatus,
+        values_callable=lambda enum: [
+            item.value for item in enum
+        ]
+    ),
     index=True,
     default=CandidateStatus.NEW
 )

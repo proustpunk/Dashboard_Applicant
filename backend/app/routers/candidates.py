@@ -7,12 +7,12 @@ import json
 from typing import Optional
 from sqlalchemy import or_
 from fastapi import Query
-from app.schemas import CandidateListResponse
+from app.schemas import CandidateListResponse, InternalNoteUpdate
 from app.services.event_manager import event_manager
 from app.services.event_manager import event_manager
 from app.models import SessionLocal, Candidate, Score
 from fastapi import Depends
-from app.routers.auth import get_current_user
+from app.routers.auth import get_current_user,require_admin
 from app.models import User, UserRole
 router = APIRouter()
 
@@ -45,6 +45,44 @@ def get_candidate(id: int, current_user: User = Depends(get_current_user)):
     return CandidateAdminDetailResponse.model_validate(
         candidate
     )
+
+@router.patch(
+    "/candidates/{id}/notes"
+)
+def update_internal_notes(
+    id: int,
+    data: InternalNoteUpdate,
+    current_user: User = Depends(require_admin)
+):
+
+    db = SessionLocal()
+
+    candidate = db.query(Candidate).filter(
+        Candidate.id == id
+    ).first()
+
+
+    if not candidate:
+
+        db.close()
+
+        raise HTTPException(
+            status_code=404,
+            detail="Candidate not found"
+        )
+
+
+    candidate.internal_notes = data.internal_notes
+
+
+    db.commit()
+
+    db.refresh(candidate)
+
+    db.close()
+
+
+    return candidate
 
 @router.post("/candidates/{id}/scores", response_model=ScoreResponse)
 async def create_score(id: int, score_data: ScoreCreate, current_user: User = Depends(get_current_user)): #PUBLISH IS ASYNC

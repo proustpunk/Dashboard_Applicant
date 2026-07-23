@@ -57,13 +57,16 @@ class CandidateDetailResponse(BaseModel):
     skills: list[str] | None
     summary: str | None
     scores: list[ScoreResponse] = []
-
+    internal_notes: str | None
     created_at: datetime
 
     model_config = {
         "from_attributes": True
     }
 
+class InternalNoteUpdate(BaseModel):
+
+    internal_notes: str
 
 class CandidateAdminDetailResponse(BaseModel):
     id: int

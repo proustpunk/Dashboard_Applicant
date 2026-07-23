@@ -13,7 +13,12 @@ SECRET_KEY = "change-this-before-production"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-oauth2_scheme = OAuth2PasswordBearer(
+router = APIRouter(
+    prefix="/auth",
+    tags=["Authentication"]
+)
+
+oauth2_scheme = OAuth2PasswordBearer( #where to expect token
     tokenUrl="/auth/login"
 )
 
@@ -29,13 +34,13 @@ def get_current_user(
     token: str = Depends(oauth2_scheme)
 ):
     try:
-        payload = jwt.decode(
+        payload = jwt.decode( 
             token,
             SECRET_KEY,
             algorithms=[ALGORITHM]
         )
 
-        email = payload.get("sub")
+        email = payload.get("sub") #which user this token belongs to
 
         if email is None:
             raise HTTPException(
@@ -66,7 +71,7 @@ def get_current_user(
     return user
 
 def hash_password(password: str):
-    return pwd_context.hash(password)
+    return pwd_context.hash(password) #bcrypt hash
 
 
 def verify_password(
