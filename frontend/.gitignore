@@ -1,0 +1,33 @@
+# Python environment
+dashboardenv/
+venv/
+.env
+*.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Testing
+.pytest_cache/
+
+# SQLite database
+*.db
+
+# Alembic cache
+alembic/__pycache__/
+
+# React / Node
+frontend/node_modules/
+frontend/dist/
+
+# Vite environment files
+frontend/.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
