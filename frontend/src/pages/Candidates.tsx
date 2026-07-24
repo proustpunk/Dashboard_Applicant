@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../auth/AuthContext";
 
 interface Score {
 
@@ -35,7 +35,7 @@ export default function Candidates(){
 
     const navigate = useNavigate();
 
-
+    const {logout} = useAuth()
     const [candidates,setCandidates] =
         useState<Candidate[]>([]);
 
@@ -54,7 +54,7 @@ export default function Candidates(){
         useState("");
 
 
-
+    
     const [offset,setOffset] =
         useState(0);
 
@@ -62,7 +62,7 @@ export default function Candidates(){
 
     const limit = 5;
 
-
+    
 
     async function fetchCandidates(){
 
@@ -130,13 +130,22 @@ export default function Candidates(){
     }
 
 
-
+   
 
 
     return (
 
-        <div className="candidates-page">
+        
 
+        <div className="candidates-page">
+            <button
+    onClick={()=>{
+        logout();
+        navigate("/login");
+    }}
+>
+    Logout
+</button>
 
             <h1>
                 Candidates
