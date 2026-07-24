@@ -1,41 +1,133 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+
+    BrowserRouter,
+
+    Routes,
+
+    Route,
+
+    Navigate
+
+} from "react-router-dom";
+
+
 import Login from "./pages/Login";
+
 import Candidates from "./pages/Candidates";
+
 import CandidateDetail from "./pages/CandidateDetail";
 
-function App() {
+import ProtectedRoute from "./components/ProtectedRoute";
 
-  return (
-    <BrowserRouter>
 
-      <Routes>
 
-        <Route
-          path="/"
-          element={
-            <Navigate to="/login" />
-          }
-        />
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
 
-        <Route
-          path="/candidates"
-          element={<Candidates />}
-        />
+export default function App(){
 
-        <Route
-    path="/candidates/:id"
-    element={<CandidateDetail />}
-/>
 
-      </Routes>
 
-    </BrowserRouter>
-  )
+    return (
+
+
+        <BrowserRouter>
+
+
+            <Routes>
+
+
+
+                <Route
+
+                    path="/"
+
+                    element={
+
+                        <Navigate
+
+                            to="/login"
+
+                            replace
+
+                        />
+
+                    }
+
+                />
+
+
+
+
+
+                <Route
+
+                    path="/login"
+
+                    element={<Login />}
+
+                />
+
+
+
+
+
+
+
+                <Route
+
+                    path="/candidates"
+
+                    element={
+
+                        <ProtectedRoute>
+
+
+                            <Candidates />
+
+
+                        </ProtectedRoute>
+
+
+                    }
+
+                />
+
+
+
+
+
+
+
+                <Route
+
+                    path="/candidates/:id"
+
+                    element={
+
+
+                        <ProtectedRoute>
+
+
+                            <CandidateDetail />
+
+
+                        </ProtectedRoute>
+
+
+                    }
+
+                />
+
+
+
+
+
+            </Routes>
+
+
+        </BrowserRouter>
+
+
+    )
+
 }
-
-export default App;

@@ -9,6 +9,23 @@ export async function getCandidate(id: string) {
     return response.data;
 }
 
+export async function getCandidates(
+    offset: number,
+    limit: number
+) {
+
+    const response = await api.get(
+        "/candidates",
+        {
+            params: {
+                offset,
+                limit
+            }
+        }
+    );
+
+    return response.data;
+}
 
 export async function createScore(
     id: string,

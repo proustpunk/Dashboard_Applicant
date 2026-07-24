@@ -4,12 +4,17 @@ from app.routers.auth import hash_password
 db = SessionLocal()
 
 
-user = User(
-    email="admin@test.com",
-    hashed_password=hash_password("password"),
-    role=UserRole.ADMIN
-)
+# user = User(
+#     email="reviewer1@test.com",
+#     hashed_password=hash_password("password"),
+#     role=UserRole.REVIEWER
+# )
 
+user = User(
+    email="reviewer2@test.com",
+    hashed_password=hash_password("password"),
+    role=UserRole.REVIEWER
+)
 db.add(user)
 db.commit()
-print("Candidates created")
+db.close()

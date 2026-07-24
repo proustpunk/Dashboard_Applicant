@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.services.candidate_service import generate_candidate_summary
-from app.schemas import CandidateAdminDetailResponse,CandidateDetailResponse,SummaryResponse,CandidateResponse, ScoreCreate,ScoreResponse
+from app.schemas import CandidateCreate,CandidateAdminDetailResponse,CandidateDetailResponse,SummaryResponse,CandidateResponse, ScoreCreate,ScoreResponse
 from sqlalchemy.orm import joinedload
 from fastapi.responses import StreamingResponse
 import json
@@ -16,6 +16,26 @@ from app.routers.auth import get_current_user,require_admin
 from app.models import User, UserRole
 router = APIRouter()
 
+
+@router.post("/candidates")
+def create_candidate(candidate: CandidateCreate):
+
+    db = SessionLocal()
+
+    new_candidate = Candidate(
+        name=candidate.name,
+        email=candidate.email,
+        role_applied=candidate.role_applied,
+        skills=candidate.skills
+    )
+
+    db.add(new_candidate)
+    db.commit()
+    db.refresh(new_candidate)
+
+    db.close()
+
+    return new_candidate
 
 @router.get("/candidates/{id}")
 def get_candidate(id: int, current_user: User = Depends(get_current_user)):

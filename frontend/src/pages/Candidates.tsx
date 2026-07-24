@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
+
 interface Score {
 
     id:number;
@@ -23,56 +24,85 @@ interface Candidate {
     skills:string[];
     summary:string | null;
 
-    scores: Score[];
+    scores:Score[];
 
 }
 
+
+
 export default function Candidates(){
+
 
     const navigate = useNavigate();
 
-    const [candidates,setCandidates] = useState<Candidate[]>([]);
+
+    const [candidates,setCandidates] =
+        useState<Candidate[]>([]);
 
 
-    // filters
-    const [status,setStatus] = useState("");
-    const [role,setRole] = useState("");
-    const [skill,setSkill] = useState("");
-    const [keyword,setKeyword] = useState("");
+
+    const [status,setStatus] =
+        useState("");
+
+    const [role,setRole] =
+        useState("");
+
+    const [skill,setSkill] =
+        useState("");
+
+    const [keyword,setKeyword] =
+        useState("");
 
 
-    // pagination
-    const [offset,setOffset] = useState(0);
+
+    const [offset,setOffset] =
+        useState(0);
+
+
 
     const limit = 5;
 
 
+
     async function fetchCandidates(){
 
+
         try{
+
 
             const response = await api.get(
                 "/candidates",
                 {
+
                     params:{
+
                         status: status || undefined,
-                        role_applied: role || undefined,
-                        skill: skill || undefined,
-                        keyword: keyword || undefined,
+
+                        role_applied:
+                            role || undefined,
+
+                        skill:
+                            skill || undefined,
+
+                        keyword:
+                            keyword || undefined,
 
                         offset,
+
                         limit
+
                     }
+
                 }
             );
 
 
-            setCandidates(
-                response.data
-            );
+            setCandidates(response.data);
 
 
-        }catch(error){
+        }
+
+        catch(error){
 
             console.log(error);
 
@@ -81,11 +111,13 @@ export default function Candidates(){
     }
 
 
+
     useEffect(()=>{
 
         fetchCandidates();
 
     },[offset]);
+
 
 
 
@@ -99,13 +131,17 @@ export default function Candidates(){
 
 
 
+
+
     return (
 
-        <div>
+        <div className="candidates-page">
+
 
             <h1>
                 Candidates
             </h1>
+
 
 
             <div>
@@ -120,6 +156,7 @@ export default function Candidates(){
                 />
 
 
+
                 <input
                     placeholder="role"
                     value={role}
@@ -127,6 +164,7 @@ export default function Candidates(){
                         e=>setRole(e.target.value)
                     }
                 />
+
 
 
                 <input
@@ -138,6 +176,7 @@ export default function Candidates(){
                 />
 
 
+
                 <input
                     placeholder="keyword"
                     value={keyword}
@@ -147,9 +186,8 @@ export default function Candidates(){
                 />
 
 
-                <button
-                    onClick={search}
-                >
+
+                <button onClick={search}>
                     Search
                 </button>
 
@@ -158,18 +196,29 @@ export default function Candidates(){
 
 
 
-            <hr/>
-
 
             {
+
+
                 candidates.map(candidate=>(
 
+
                     <div
-    key={candidate.id}
-    onClick={() =>
-        navigate(`/candidates/${candidate.id}`)
-    }
->
+
+                        className="candidate-card"
+
+                        key={candidate.id}
+
+                        onClick={()=>{
+
+                            navigate(
+                                `/candidates/${candidate.id}`
+                            )
+
+                        }}
+
+                    >
+
 
                         <h3>
                             {candidate.name}
@@ -183,50 +232,75 @@ export default function Candidates(){
 
                         <p>
                             Role:
+                            {" "}
                             {candidate.role_applied}
                         </p>
 
 
                         <p>
                             Status:
+                            {" "}
                             {candidate.status}
                         </p>
 
 
-                        <hr/>
-
                     </div>
 
+
                 ))
+
             }
 
 
 
-            <button
-                disabled={offset===0}
-                onClick={()=>{
-                    setOffset(
-                        offset-limit
-                    )
-                }}
-            >
-                Previous
-            </button>
+
+            <div className="pagination">
 
 
-            <button
-                onClick={()=>{
-                    setOffset(
-                        offset+limit
-                    )
-                }}
-            >
-                Next
-            </button>
+                <button
+
+                    disabled={offset===0}
+
+                    onClick={()=>{
+
+                        setOffset(
+                            offset-limit
+                        )
+
+                    }}
+
+                >
+
+                    Previous
+
+                </button>
+
+
+
+                <button
+
+                    onClick={()=>{
+
+                        setOffset(
+                            offset+limit
+                        )
+
+                    }}
+
+                >
+
+                    Next
+
+                </button>
+
+
+            </div>
+
 
 
         </div>
 
     )
+
 
 }

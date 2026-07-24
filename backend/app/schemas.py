@@ -7,6 +7,12 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
+class CandidateCreate(BaseModel):
+    name: str
+    email: str
+    role_applied: str
+    skills: list[str] | None = None
+
 class CandidateResponse(BaseModel):
     id: int
     name: str

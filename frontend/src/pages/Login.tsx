@@ -4,26 +4,46 @@ import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 
+
 export default function Login(){
 
-    const [email,setEmail] = useState("");
-    const [password,setPassword] = useState("");
 
-    const {login} = useAuth();
+    const [email,setEmail] =
+        useState("");
 
-    const navigate = useNavigate();
+    const [password,setPassword] =
+        useState("");
+
+
+
+    const {login} =
+        useAuth();
+
+
+
+    const navigate =
+        useNavigate();
+
+
+
 
 
     async function handleLogin(){
 
+
         try{
 
-            const form = new URLSearchParams();
+
+            const form =
+                new URLSearchParams();
+
+
 
             form.append(
                 "username",
                 email
             );
+
 
             form.append(
                 "password",
@@ -31,16 +51,27 @@ export default function Login(){
             );
 
 
-            const response = await api.post(
-                "/auth/login",
-                form,
-                {
-                    headers:{
-                        "Content-Type":
-                        "application/x-www-form-urlencoded"
+
+            const response =
+                await api.post(
+
+                    "/auth/login",
+
+                    form,
+
+                    {
+
+                        headers:{
+
+                            "Content-Type":
+                            "application/x-www-form-urlencoded"
+
+                        }
+
                     }
-                }
-            );
+
+                );
+
 
 
             login(
@@ -48,57 +79,88 @@ export default function Login(){
             );
 
 
+
             navigate("/candidates");
 
 
-        }catch(error){
+        }
+
+        catch(error){
 
             console.log(error);
 
             alert(
                 "Login failed"
             );
+
         }
+
 
     }
 
 
+
+
+
     return (
 
-        <div>
+
+        <div className="login-page">
+
 
             <h1>
                 Login
             </h1>
 
 
+
             <input
+
                 placeholder="email"
+
                 value={email}
+
                 onChange={
-                    e=>setEmail(e.target.value)
+                    e=>setEmail(
+                        e.target.value
+                    )
                 }
+
             />
+
 
 
             <input
+
                 placeholder="password"
+
                 type="password"
+
                 value={password}
+
                 onChange={
-                    e=>setPassword(e.target.value)
+                    e=>setPassword(
+                        e.target.value
+                    )
                 }
+
             />
+
 
 
             <button
                 onClick={handleLogin}
             >
+
                 Login
+
             </button>
+
 
 
         </div>
 
+
     )
+
 }

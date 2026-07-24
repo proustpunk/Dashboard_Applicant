@@ -1,71 +1,110 @@
 interface Score {
 
-    id: number;
-    category: string;
-    score: number;
-    reviewer_id: string;
-    note: string | null;
+    id:number;
+
+    category:string;
+
+    score:number;
+
+    reviewer_id:string;
+
+    note:string|null;
 
 }
 
-interface ScoreListProps {
 
-    scores: Score[];
-
-}
 
 export default function ScoreList({
 
     scores
 
-}: ScoreListProps) {
+}:{
 
-    if (scores.length === 0) {
+    scores:Score[];
+
+}){
+
+
+
+    if(scores.length===0){
 
         return (
-            <p>No scores yet.</p>
-        );
+
+            <p>
+                No scores yet.
+            </p>
+
+        )
 
     }
+
+
 
     return (
 
         <div>
 
-            <h2>Scores</h2>
+
+            <h2>
+                Scores
+            </h2>
+
 
             {
 
-                scores.map(score => (
 
-                    <div key={score.id}>
+                scores.map(score=>(
 
-                        <p>
-                            Category: {score.category}
-                        </p>
 
-                        <p>
-                            Score: {score.score}/5
-                        </p>
+                    <div
 
-                        <p>
-                            Reviewer: {score.reviewer_id}
-                        </p>
+                        className="score-card"
+
+                        key={score.id}
+
+                    >
+
 
                         <p>
-                            Note: {score.note ?? "No note"}
+                            Category:
+                            {" "}
+                            {score.category}
                         </p>
 
-                        <hr />
+
+                        <p>
+                            Score:
+                            {" "}
+                            {score.score}/5
+                        </p>
+
+
+                        <p>
+                            Reviewer:
+                            {" "}
+                            {score.reviewer_id}
+                        </p>
+
+
+                        <p>
+                            Note:
+                            {" "}
+                            {score.note ?? "No note"}
+                        </p>
+
+
 
                     </div>
+
 
                 ))
 
             }
 
+
         </div>
 
-    );
+    )
+
 
 }
