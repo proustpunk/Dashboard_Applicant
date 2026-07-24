@@ -2,22 +2,26 @@ services:
 
   backend:
     build: ./backend
-
     ports:
       - "8000:8000"
-
     volumes:
       - ./backend:/app
 
+  create-admin:
+    build: ./backend
+    command: python create_admin.py
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - backend
+    restart: "no"
+
   frontend:
     build: ./frontend
-
     ports:
       - "5173:5173"
-
     volumes:
       - ./frontend:/app
       - /app/node_modules
-
     depends_on:
       - backend
