@@ -72,6 +72,10 @@ The script is idempotent. It checks for an existing admin by email before insert
 
 Default local credentials: `admin@test.com` / `adminpassword`. These are hardcoded for development convenience and are not meant to survive contact with a production environment; a real deployment would pull credentials from environment variables or a secrets manager instead.
 
+### Registering a reviewer account
+
+The `create-admin` service only seeds the admin account. There's no automatic reviewer seed, so to test reviewer-facing flows (submitting scores, viewing only your own reviews), register one manually through the backend's registration endpoint (e.g. via the FastAPI docs at `http://localhost:8000/docs`, or a direct request to the register route) before logging in as a reviewer on the frontend.
+
 ### Local development note
 
 Volume-mounting source code trades image purity for fast iteration. Edits show up immediately without rebuilds, at the cost of the running container's filesystem diverging from what was baked into the image at build time. That's the right call for local development. A production build would drop the mounts and rely purely on the built image, with migrations run as a separate deploy step rather than tied to container startup.
