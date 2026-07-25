@@ -9,9 +9,16 @@ from app.models import SessionLocal, User, UserRole
 from app.schemas import UserCreate
 from jose import JWTError
 
-SECRET_KEY = "change-this-before-production"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(
+    os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60")
+)
 
 router = APIRouter(
     prefix="/auth",
